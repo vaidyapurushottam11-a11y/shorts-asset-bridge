@@ -1,0 +1,37 @@
+name: align-narration
+on:
+  workflow_dispatch:
+    inputs:
+      audio_url: { description: "signed narration URL", required: true }
+      tag:       { description: "release tag", required: true }
+permissions:
+  contents: write
+jobs:
+  align:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install faster-whisper
+        run: pip install -q faster-whisper
+      - name: Download narration
+        run: |
+          echo "::add-mask::${{ inputs.audio_url }}"
+          curl -fSL --retry 4 -o narration.mp3 "${{ inputs.audio_url }}"
+      - name: Word-level alignment
+        run: |
+          python3 - <<'PY'
+          from faster_whisper import WhisperModel
+          import json
+          m = WhisperModel("base.en", device="cpu", compute_type="int8")
+          segs,_ = m.transcribe("narration.mp3", word_timestamps=True, beam_size=5)
+          words=[]
+          for s in segs:
+              for w in (s.words or []):
+                  words.append({"word":w.word.strip(),"start":round(w.start,3),"end":round(w.end,3)})
+          json.dump({"words":words}, open("words.json","w"))
+          print("aligned words:", len(words))
+          PY
+      - name: Publish words.json
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          gh release delete "${{ inputs.tag }}" -y --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
+          gh release create "${{ inputs.tag }}" words.json --repo "${{ github.repository }}" --title "align ${{ inputs.tag }}" --notes "whisper word timings"
