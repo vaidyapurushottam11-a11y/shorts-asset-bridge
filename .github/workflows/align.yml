@@ -2,8 +2,8 @@ name: align-narration
 on:
   workflow_dispatch:
     inputs:
-      audio_url: { description: "signed narration URL", required: true }
-      tag:       { description: "release tag", required: true }
+      audio_url: { required: true }
+      tag: { required: true }
 permissions:
   contents: write
 jobs:
@@ -16,22 +16,28 @@ jobs:
         run: |
           echo "::add-mask::${{ inputs.audio_url }}"
           curl -fSL --retry 4 -o narration.mp3 "${{ inputs.audio_url }}"
-      - name: Word-level alignment
+      - name: Align
         run: |
           python3 - <<'PY'
           from faster_whisper import WhisperModel
           import json
-          m = WhisperModel("base.en", device="cpu", compute_type="int8")
-          segs,_ = m.transcribe("narration.mp3", word_timestamps=True, beam_size=5)
+          m=WhisperModel("base.en",device="cpu",compute_type="int8")
+          segs,_=m.transcribe("narration.mp3",word_timestamps=True,beam_size=5)
           words=[]
           for s in segs:
-              for w in (s.words or []):
-                  words.append({"word":w.word.strip(),"start":round(w.start,3),"end":round(w.end,3)})
-          json.dump({"words":words}, open("words.json","w"))
-          print("aligned words:", len(words))
+              for w in (s.words or []): words.append({"word":w.word.strip(),"start":round(w.start,3),"end":round(w.end,3)})
+          json.dump({"words":words},open("words.json","w"))
+          print("words",len(words))
           PY
-      - name: Publish words.json
-        env: { GH_TOKEN: "${{ github.token }}" }
+      - name: Publish (idempotent + retry)
+        env: { GH_TOKEN: "${{ github.token }}", R: "${{ github.repository }}", TAG: "${{ inputs.tag }}" }
         run: |
-          gh release delete "${{ inputs.tag }}" -y --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
-          gh release create "${{ inputs.tag }}" words.json --repo "${{ github.repository }}" --title "align ${{ inputs.tag }}" --notes "whisper word timings"
+          for i in 1 2 3 4; do
+            if gh release view "$TAG" --repo "$R" >/dev/null 2>&1; then
+              gh release upload "$TAG" words.json --clobber --repo "$R" && exit 0
+            else
+              gh release create "$TAG" words.json --repo "$R" --title "align $TAG" --notes "whisper" && exit 0
+            fi
+            echo "retry $i"; sleep $((i*5))
+          done
+          exit 1
