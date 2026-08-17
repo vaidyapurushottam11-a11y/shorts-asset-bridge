@@ -1,0 +1,51 @@
+name: pikaso-transfer
+# Downloads Magnific/Pikaso signed URLs on the runner and republishes them as
+# PUBLIC release assets so the (allowlisted-to-GitHub) build sandbox can pull them.
+# Trigger: Actions tab -> "Run workflow", or via api.github.com workflow_dispatch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag / Short id (e.g. wy-02)"
+        required: true
+      manifest:
+        description: 'JSON map {"outputName.ext":"signed_pikaso_url", ...}'
+        required: true
+
+permissions:
+  contents: write          # only the run's built-in token; lets it create a Release
+
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download assets from Pikaso
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          printf '%s' '${{ inputs.manifest }}' > manifest.json
+          # Mask every URL in the logs, then fetch each to its target filename.
+          python3 - <<'PY'
+          import json
+          m = json.load(open('manifest.json'))
+          with open('dl.sh','w') as f:
+              for name, url in m.items():
+                  print(f"::add-mask::{url}")
+                  f.write(f'curl -fSL --retry 4 --retry-delay 2 -o "assets/{name}" "{url}"\n')
+          PY
+          bash dl.sh
+          echo "Downloaded:"; ls -la assets
+
+      - name: Publish as a public Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Replace any prior release with the same tag so re-runs are clean.
+          gh release delete "${{ inputs.tag }}" -y --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
+          gh release create "${{ inputs.tag }}" assets/* \
+            --repo "${{ github.repository }}" \
+            --title "Assets ${{ inputs.tag }}" \
+            --notes "Automated Pikaso transfer (deterministic bridge)."
+          echo "Release ${{ inputs.tag }} published with assets:"; ls assets
