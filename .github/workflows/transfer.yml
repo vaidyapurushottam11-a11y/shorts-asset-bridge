@@ -28,6 +28,17 @@ jobs:
         if: github.event_name == 'push'
         uses: actions/checkout@v4
 
+      - name: Record push trigger diagnostic
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          echo "push trigger reached" > bridge-triggered.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bridge-triggered.txt
+          git commit -m "Record bridge trigger diagnostic" || true
+          git push
+
       - name: Resolve transfer request
         id: request
         shell: bash
