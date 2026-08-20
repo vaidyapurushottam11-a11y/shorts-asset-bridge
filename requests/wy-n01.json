@@ -1,0 +1,16 @@
+{
+  "tag": "wy-n01",
+  "manifest": {
+    "s01.mp4": "https://pikaso.cdnpk.net/private/production/5214234242/ada734bc-9d1c-47d7-a1ad-341453bd6027-0.mp4?token=exp=1787443200~hmac=aef56575ea0811c3685fb1136b69c98a7a8e734310ee13dd5a5d6709933eaf8f",
+    "s02.mp4": "https://pikaso.cdnpk.net/private/production/5214248524/d86109e3-6ab2-4a68-88d5-ab8a9b9c8608-0.mp4?token=exp=1787443200~hmac=f75cf948567c5a2e62611c37d0803cb13dae60246662bcb17a6b8614410d7a2b",
+    "s03.mp4": "https://pikaso.cdnpk.net/private/production/5214289887/5c87d71c-47b3-4efb-8013-6b43d3a9891c-0.mp4?token=exp=1787443200~hmac=89bbce68bef7396dd7d675a15cdd0abbcd84d4d076a4eaa1774099e616c29812",
+    "s04.mp4": "https://pikaso.cdnpk.net/private/production/5214290012/5eb8e1ae-1b8b-46bb-9a67-b7b958586b65-0.mp4?token=exp=1787443200~hmac=f3df4e56d9f4d7b19d8ec50793833ee6095ceb37917aab8acdd422ceb1fa183d",
+    "s05.mp4": "https://pikaso.cdnpk.net/private/production/5214290905/81c142fa-b7e7-4cec-8cbc-ce0059ea4cc5-0.mp4?token=exp=1787443200~hmac=069612fab1077f3bc6f3661a42312025802dbcc2318d2de119b78b3045a5e138",
+    "s06.mp4": "https://pikaso.cdnpk.net/private/production/5214291168/675a187a-c96c-4ddb-b19c-8079137c511f-0.mp4?token=exp=1787443200~hmac=6b8bd5b47ae830ac9b7e92a1165c385ee6bb8bba9b8e74b71c40d28ecfe1acd3",
+    "s07.mp4": "https://pikaso.cdnpk.net/private/production/5214291744/67fa506b-6a48-4861-926c-d5e791e26acc-0.mp4?token=exp=1787443200~hmac=f81b252bf4835e722d2065717cb5ae519dc533cca0d4d652afa447c2138b55a1",
+    "s08.mp4": "https://pikaso.cdnpk.net/private/production/5214291597/fbd3c0c6-ac09-474e-8d77-6cf4606a5f56-0.mp4?token=exp=1787443200~hmac=5e2210e2f1de9aa7f16a481c775841787cd9009f9b1e63dbe8821bb255573344",
+    "s09.mp4": "https://pikaso.cdnpk.net/private/production/5214291898/e19f989f-8743-4c44-a1a1-b1de5b81f65e-0.mp4?token=exp=1787443200~hmac=a2324251187ca237fc629533a91fa141945780c0e9aa47b81b8aecb3bf73701d",
+    "s10.mp4": "https://pikaso.cdnpk.net/private/production/5214292714/5af0152f-5644-4230-9957-62782c1069ab-0.mp4?token=exp=1787443200~hmac=6073f4d4b553dd8068547d7f76fb023ad1ef3993c9437ae342a613112f15e9d2",
+    "narration.mp3": "https://pikaso.cdnpk.net/private/production/5214840863/audio.mp3?token=exp=1787443200~hmac=73515b1fc74a86ad4903ea9e8d838360c0c662d5b24489be6b4fb3ad4c26cdac"
+  }
+}
