@@ -1,7 +1,8 @@
 name: pikaso-transfer
 # Downloads Magnific/Pikaso signed URLs on the runner and republishes them as
 # PUBLIC release assets so the (allowlisted-to-GitHub) build sandbox can pull them.
-# Trigger: Actions tab -> "Run workflow", or via api.github.com workflow_dispatch.
+# Trigger: Actions tab -> "Run workflow", via api.github.com workflow_dispatch,
+# or by committing a request JSON under requests/*.json.
 
 on:
   workflow_dispatch:
@@ -12,6 +13,9 @@ on:
       manifest:
         description: 'JSON map {"outputName.ext":"signed_pikaso_url", ...}'
         required: true
+  push:
+    paths:
+      - 'requests/*.json'
 
 permissions:
   contents: write          # only the run's built-in token; lets it create a Release
@@ -20,11 +24,39 @@ jobs:
   transfer:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out request file
+        if: github.event_name == 'push'
+        uses: actions/checkout@v4
+
+      - name: Resolve transfer request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            printf '%s' '${{ inputs.tag }}' > tag.txt
+            printf '%s' '${{ inputs.manifest }}' > manifest.json
+          else
+            REQUEST_FILE=$(git diff-tree --no-commit-id --name-only -r "${{ github.sha }}" -- 'requests/*.json' | tail -n 1)
+            if [ -z "$REQUEST_FILE" ]; then
+              echo "No request JSON found in triggering commit" >&2
+              exit 1
+            fi
+            python3 - "$REQUEST_FILE" <<'PY'
+          import json, sys
+          request = json.load(open(sys.argv[1]))
+          tag = request['tag']
+          manifest = request['manifest']
+          open('tag.txt', 'w').write(tag)
+          json.dump(manifest, open('manifest.json', 'w'))
+          PY
+          fi
+          echo "tag=$(cat tag.txt)" >> "$GITHUB_OUTPUT"
+
       - name: Download assets from Pikaso
         run: |
           set -euo pipefail
           mkdir -p assets
-          printf '%s' '${{ inputs.manifest }}' > manifest.json
           # Mask every URL in the logs, then fetch each to its target filename.
           python3 - <<'PY'
           import json
@@ -42,10 +74,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          TAG='${{ steps.request.outputs.tag }}'
           # Replace any prior release with the same tag so re-runs are clean.
-          gh release delete "${{ inputs.tag }}" -y --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
-          gh release create "${{ inputs.tag }}" assets/* \
+          gh release delete "$TAG" -y --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
+          gh release create "$TAG" assets/* \
             --repo "${{ github.repository }}" \
-            --title "Assets ${{ inputs.tag }}" \
+            --title "Assets $TAG" \
             --notes "Automated Pikaso transfer (deterministic bridge)."
-          echo "Release ${{ inputs.tag }} published with assets:"; ls assets
+          echo "Release $TAG published with assets:"; ls assets
