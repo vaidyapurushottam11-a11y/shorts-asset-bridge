@@ -1,0 +1,12 @@
+short=he-n02
+clips=9
+narration_duration=62.276
+output_duration=62.276
+resolution=1080x1920
+video_codec=h264
+audio_codec=aac
+stretch_factors=1.294,1.274,1.314,1.333,1.392,1.412,1.392,1.451,1.490
+captions_status=BURNED_IN
+overlay_count=4
+technical_status=PASS
+editorial_status=PENDING_HUMAN_REVIEW
