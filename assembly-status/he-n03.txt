@@ -1,0 +1,10 @@
+short=he-n03
+clips=9
+narration_duration=59.899
+output_duration=59.899
+resolution=1080x1920
+video_codec=h264
+audio_codec=aac
+stretch_factors=1.228,1.247,1.307,1.228,1.346,1.307,1.386,1.386,1.445
+technical_status=PASS
+editorial_status=PENDING_HUMAN_REVIEW
