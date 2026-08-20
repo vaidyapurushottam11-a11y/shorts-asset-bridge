@@ -55,6 +55,18 @@ jobs:
           fi
           echo "tag=$(cat tag.txt)" >> "$GITHUB_OUTPUT"
 
+      - name: HE-N03 resolved checkpoint
+        if: github.event_name == 'push' && steps.request.outputs.tag == 'he-n03'
+        run: |
+          set -euo pipefail
+          mkdir -p transfer-status
+          echo resolved > transfer-status/he-n03-resolved.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add transfer-status/he-n03-resolved.txt
+          git commit -m "Record HE-N03 resolve checkpoint" || exit 0
+          git push
+
       - name: Download assets from Pikaso
         run: |
           set -euo pipefail
@@ -69,6 +81,19 @@ jobs:
           PY
           bash dl.sh
           echo "Downloaded:"; ls -la assets
+
+      - name: HE-N03 downloaded checkpoint
+        if: github.event_name == 'push' && steps.request.outputs.tag == 'he-n03'
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          mkdir -p transfer-status
+          echo downloaded > transfer-status/he-n03-downloaded.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add transfer-status/he-n03-downloaded.txt
+          git commit -m "Record HE-N03 download checkpoint" || exit 0
+          git push
 
       - name: Publish as a public Release
         env:
@@ -88,6 +113,7 @@ jobs:
         run: |
           set -euo pipefail
           TAG='${{ steps.request.outputs.tag }}'
+          git pull --rebase
           mkdir -p transfer-status
           printf 'release=%s\nassets=%s\n' "$TAG" "$(find assets -maxdepth 1 -type f | wc -l)" > "transfer-status/$TAG.txt"
           git config user.name "github-actions[bot]"
