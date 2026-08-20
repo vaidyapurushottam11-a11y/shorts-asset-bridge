@@ -1,0 +1,2 @@
+release=he-n01
+assets=11
