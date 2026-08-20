@@ -39,6 +39,25 @@ jobs:
           git commit -m "Record bridge trigger diagnostic" || true
           git push
 
+      - name: Record event path diagnostic
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          event = json.load(open(os.environ['GITHUB_EVENT_PATH']))
+          head = event.get('head_commit') or {}
+          safe = {
+              'added': head.get('added') or [],
+              'modified': head.get('modified') or [],
+              'removed': head.get('removed') or [],
+          }
+          json.dump(safe, open('bridge-event-paths.json', 'w'), indent=2)
+          PY
+          git add bridge-event-paths.json
+          git commit -m "Record bridge event path diagnostic" || true
+          git push
+
       - name: Resolve transfer request
         id: request
         shell: bash
