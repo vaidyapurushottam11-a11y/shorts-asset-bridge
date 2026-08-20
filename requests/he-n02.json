@@ -1,0 +1,15 @@
+{
+  "tag": "he-n02",
+  "manifest": {
+    "s01.mp4": "https://pikaso.cdnpk.net/private/production/5214621334/5cfed786-efd1-4353-95cc-9abecd866833-0.mp4?token=exp=1787443200~hmac=5fe02b0a0d34ed4bc83025182a4e7d72201f2d7cdd9e0057f619208d2cad5bc5",
+    "s02.mp4": "https://pikaso.cdnpk.net/private/production/5214620887/348da3d4-e3d4-4682-b96b-982a19edad0b-0.mp4?token=exp=1787443200~hmac=b5aa2258d537eb9d04b40eaa6562f0c21913853ee65cb77b1fb8c59a30944245",
+    "s03.mp4": "https://pikaso.cdnpk.net/private/production/5214623203/badfa09b-e71f-4b6f-bfa7-9f9e1cb1ff7f-0.mp4?token=exp=1787443200~hmac=e8d039c7cc9c70112a6ddde96cf725a0590757ef7b0a59cf35db779c8fe5aa82",
+    "s04.mp4": "https://pikaso.cdnpk.net/private/production/5214626366/35cfe432-f490-4f79-81fc-5906585b085f-0.mp4?token=exp=1787443200~hmac=ed393486fc94b478baaf0491fc9cdb5ee485f5fc240b4f776e36ba98931c5eea",
+    "s05.mp4": "https://pikaso.cdnpk.net/private/production/5214748925/9ca6441e-9efc-4aac-a384-ca08131df0cf-0.mp4?token=exp=1787443200~hmac=606310aeea14481a62d6a9a5195b6ac38f4799b2e3fb0626296dedf4498176a7",
+    "s06.mp4": "https://pikaso.cdnpk.net/private/production/5214750143/49e38a7d-f0ef-46fc-9aa6-7016f4c613b2-0.mp4?token=exp=1787443200~hmac=9ce4bd3fd819b8013229a070f5a952649554b5af26ee4bd935d89e6e7c043028",
+    "s07.mp4": "https://pikaso.cdnpk.net/private/production/5214821942/38234cdc-eec7-4a31-9fda-c6444f4b9a9d-0.mp4?token=exp=1787443200~hmac=39be8df9da0b1899df5c4850f4f9305842b8bd05cf27dc22ca976b15777b1216",
+    "s08.mp4": "https://pikaso.cdnpk.net/private/production/5214805683/bc4a1eca-e42d-4de6-8914-e9cb07cc9bdf-0.mp4?token=exp=1787443200~hmac=e8a192a21ae5e7ba8e31327a8b043a8dcbb5ec02f4383d16f3b220c8c1ebc772",
+    "s09.mp4": "https://pikaso.cdnpk.net/private/production/5214810881/6701b59f-1554-437d-90c8-b8953ea4bd5f-0.mp4?token=exp=1787443200~hmac=c9c42906dce397e58719e73efee5f2910bc1162ccc5ab3dacbeb36b7417ff555",
+    "narration.mp3": "https://pikaso.cdnpk.net/private/production/5214852292/audio.mp3?token=exp=1787443200~hmac=cd4f7cc7b65f7c81448e7da5411563d0e561f18e0da821ccfa70719668b92b4e"
+  }
+}
