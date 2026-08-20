@@ -1,0 +1,84 @@
+{
+  "short_id": "wy-f",
+  "pilot": false,
+  "narration": "narration.mp3",
+  "output": "wy-f_final_captioned.mp4",
+  "max_stretch": 1.55,
+  "require_text_track": true,
+  "clips": [
+    {
+      "file": "s01.mp4",
+      "target_seconds": 5.5,
+      "beat": "four easy payments, free for you (hook)"
+    },
+    {
+      "file": "s02.mp4",
+      "target_seconds": 5.0,
+      "beat": "if you're not paying, who is?"
+    },
+    {
+      "file": "s03.mp4",
+      "target_seconds": 5.0,
+      "beat": "the store hands the provider a cut"
+    },
+    {
+      "file": "s04.mp4",
+      "target_seconds": 5.0,
+      "beat": "often more than double a card fee"
+    },
+    {
+      "file": "s05.mp4",
+      "target_seconds": 5.0,
+      "beat": "what it does to your cart"
+    },
+    {
+      "file": "s06.mp4",
+      "target_seconds": 5.0,
+      "beat": "bigger baskets, more checkouts"
+    },
+    {
+      "file": "s07.mp4",
+      "target_seconds": 5.0,
+      "beat": "things you'd never buy up front"
+    },
+    {
+      "file": "s08.mp4",
+      "target_seconds": 5.0,
+      "beat": "the store pays gladly"
+    },
+    {
+      "file": "s09.mp4",
+      "target_seconds": 5.5,
+      "beat": "payoff: you were being sold to"
+    }
+  ],
+  "overlays": [
+    {
+      "start": 2.0,
+      "end": 7.0,
+      "text": "\u201cFREE\u201d \u2014 FOR YOU"
+    },
+    {
+      "start": 13.0,
+      "end": 19.0,
+      "text": "THE MERCHANT PAYS THE FEE"
+    },
+    {
+      "start": 19.5,
+      "end": 24.0,
+      "text": "OFTEN 2\u00d7 A NORMAL CARD FEE"
+    },
+    {
+      "start": 40.0,
+      "end": 46.0,
+      "text": "YOU AREN\u2019T THE CUSTOMER"
+    }
+  ],
+  "transitions": "hard-cuts",
+  "notes": [
+    "Burned-in captions generated from approved narration audio (Whisper base.en), 2-4 word chunks.",
+    "Overlays are approved mechanism facts only; no invented statistics.",
+    "No clip duplication, no freezes; narration speed unchanged; narration is the master timeline.",
+    "Buy Now, Pay Later \u2014 9 approved Kling clips."
+  ]
+}
