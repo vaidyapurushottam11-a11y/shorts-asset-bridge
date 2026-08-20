@@ -1,0 +1,15 @@
+{
+  "tag": "he-n03",
+  "manifest": {
+    "s01.mp4": "https://pikaso.cdnpk.net/private/production/5214812791/39a91803-9859-45e7-9931-8372f1a15add-0.mp4?token=exp=1787443200~hmac=6968dedc7cada9dd1aa264972e575a6f38bc4f83c785986733cc1217c01bb16c",
+    "s02.mp4": "https://pikaso.cdnpk.net/private/production/5214814360/e58dd1f9-eba5-4820-b725-ac25c9124acc-0.mp4?token=exp=1787443200~hmac=71ce3185044b4ffcb053d737a39b888e2abf1990fd112db7e763ce333f73f363",
+    "s03.mp4": "https://pikaso.cdnpk.net/private/production/5214813722/c5ae6e11-6e09-42a6-8b79-600736dbe8fa-0.mp4?token=exp=1787443200~hmac=f02060c69ed5dd51c80b03a049b07be33c834546d4dcb19a6d199fceaa0270a3",
+    "s04.mp4": "https://pikaso.cdnpk.net/private/production/5214814646/e3f2a138-0fab-4577-b0d4-6fabf26dd8d8-0.mp4?token=exp=1787443200~hmac=3b5d4b69f168d66d98e40cc4b310a1a622875ee29280c684a618c1d3cfd7330e",
+    "s05.mp4": "https://pikaso.cdnpk.net/private/production/5214817723/217b2de3-53b1-4eaf-834b-65cfceded6e0-0.mp4?token=exp=1787443200~hmac=688d6419e0404f6a78e1e6908b52b609d2e608329da284e0861d536eaf518d53",
+    "s06.mp4": "https://pikaso.cdnpk.net/private/production/5214818239/817144c9-bd32-4d9c-b7fe-a7323af69bfc-0.mp4?token=exp=1787443200~hmac=a87f3a2cd95d99da002e1ed83d7ae373439813bd8a04960f63271c79e99b40bf",
+    "s07.mp4": "https://pikaso.cdnpk.net/private/production/5214819167/18d69d9b-1979-4476-81c5-0929ef46fb64-0.mp4?token=exp=1787443200~hmac=10e83b59b9193dd7c6c9b77a8ec5d21193262b93a504a2cebf8aef1bbbed3198",
+    "s08.mp4": "https://pikaso.cdnpk.net/private/production/5214820004/fa0e04a0-6c8b-4db7-b01a-cb71a8e65c9c-0.mp4?token=exp=1787443200~hmac=c82879562ba69ed8e29712b8670113c5da4ae655b4320102f21c5e5e4caee71a",
+    "s09.mp4": "https://pikaso.cdnpk.net/private/production/5214819499/770e9f03-df51-4e26-a79f-aea8e7999808-0.mp4?token=exp=1787443200~hmac=3d6b6455997c73ee1f145d35dd0dd81b1e482890db9393c09f591172b1be0607",
+    "narration.mp3": "https://pikaso.cdnpk.net/private/production/5214853408/audio.mp3?token=exp=1787443200~hmac=5b335698f0ef84857b546ba1441e1244bd8996dec50adfd4f275140d38b5c645"
+  }
+}
