@@ -1,9 +1,10 @@
 {
   "short_id": "he-n03",
-  "pilot": true,
+  "pilot": false,
   "narration": "narration.mp3",
-  "output": "he-n03_final_pilot.mp4",
+  "output": "he-n03_final_captioned.mp4",
   "max_stretch": 1.55,
+  "require_text_track": true,
   "clips": [
     {"file": "s01.mp4", "target_seconds": 6.2, "beat": "familiar subscription-use setup"},
     {"file": "s02.mp4", "target_seconds": 6.3, "beat": "renewal/payment friction appears"},
@@ -15,13 +16,17 @@
     {"file": "s08.mp4", "target_seconds": 7.0, "beat": "forced choice causes cancellation/non-renewal"},
     {"file": "s09.mp4", "target_seconds": 7.3, "beat": "payoff: friction breaks passive subscription inertia"}
   ],
-  "captions": [],
-  "overlays": [],
+  "overlays": [
+    {"start": 1.0, "end": 5.2, "text": "SUBSCRIPTIONS LOVE INERTIA"},
+    {"start": 24.0, "end": 28.5, "text": "AUTO-RENEWAL"},
+    {"start": 40.0, "end": 45.5, "text": "PAYMENT FAILURE = DECISION POINT"},
+    {"start": 50.0, "end": 56.5, "text": "FRICTION CAN STOP THE RENEWAL"}
+  ],
   "transitions": "hard-cuts",
   "notes": [
-    "Pilot validates timing and motion before caption burn-in.",
+    "Burned-in captions are generated from the approved narration audio in 2-4 word chunks.",
+    "Mechanism overlays are programmatic and contain no unverified numeric statistics.",
     "No clip duplication, no freezes, and narration speed remains unchanged.",
-    "Unequal beat durations are intentional; final values are proportionally aligned to ffprobe narration duration.",
-    "Editorial QA must explicitly judge whether the required slow-motion factors remain natural."
+    "Editorial QA must judge caption readability, overlay relevance, and slow-motion naturalness."
   ]
 }
