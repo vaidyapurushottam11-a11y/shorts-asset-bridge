@@ -1,0 +1,31 @@
+{
+  "short_id": "he-n02",
+  "pilot": false,
+  "narration": "narration.mp3",
+  "output": "he-n02_final_captioned.mp4",
+  "max_stretch": 1.55,
+  "require_text_track": true,
+  "clips": [
+    {"file":"s01.mp4","target_seconds":6.6,"beat":"dealership negotiation"},
+    {"file":"s02.mp4","target_seconds":6.5,"beat":"apparent deal completion"},
+    {"file":"s03.mp4","target_seconds":6.7,"beat":"move to finance office"},
+    {"file":"s04.mp4","target_seconds":6.8,"beat":"finance office transition"},
+    {"file":"s05.mp4","target_seconds":7.1,"beat":"loan structure revealed"},
+    {"file":"s06.mp4","target_seconds":7.2,"beat":"add-on products"},
+    {"file":"s07.mp4","target_seconds":7.1,"beat":"paperwork commitment"},
+    {"file":"s08.mp4","target_seconds":7.4,"beat":"finance margin mechanism"},
+    {"file":"s09.mp4","target_seconds":7.6,"beat":"keys payoff"}
+  ],
+  "overlays": [
+    {"start":1.0,"end":5.5,"text":"THE DEAL ISN'T OVER YET"},
+    {"start":20.0,"end":25.0,"text":"THE FINANCE OFFICE"},
+    {"start":34.0,"end":40.0,"text":"LOAN + ADD-ONS"},
+    {"start":50.0,"end":57.0,"text":"F&I IS A PROFIT CENTER"}
+  ],
+  "transitions":"hard-cuts",
+  "notes":[
+    "Uses approved HE-N02 clips and narration only.",
+    "Burned-in captions use the approved HE-N03 safe-area treatment.",
+    "No unverified numeric overlays are introduced."
+  ]
+}
