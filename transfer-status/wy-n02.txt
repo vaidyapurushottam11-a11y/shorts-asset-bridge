@@ -1,0 +1,2 @@
+release=wy-n02
+assets=10
