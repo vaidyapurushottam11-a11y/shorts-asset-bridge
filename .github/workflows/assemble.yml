@@ -55,10 +55,13 @@ jobs:
           echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           echo "manifest=$MANIFEST_PATH" >> "$GITHUB_OUTPUT"
 
-      - name: Install FFmpeg
+      - name: Install assembly dependencies
         run: |
+          set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          python3 -m pip install --upgrade pip
+          python3 -m pip install openai-whisper
           ffmpeg -version | head -n 1
           ffprobe -version | head -n 1
 
@@ -67,7 +70,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mkdir -p work/assets work/output work/qa
+          mkdir -p work/assets work/output work/qa work/text
           gh release download '${{ steps.req.outputs.release_tag }}' \
             --repo '${{ github.repository }}' \
             --dir work/assets
@@ -82,31 +85,43 @@ jobs:
               -of default=noprint_wrappers=1:nokey=1 "$f" >/dev/null
           done
 
-      - name: Assemble narration-led pilot
+      - name: Generate burned-in caption and overlay track
+        run: |
+          set -euo pipefail
+          python3 scripts/make_text_track.py \
+            --audio work/assets/narration.mp3 \
+            --manifest '${{ steps.req.outputs.manifest }}' \
+            --out "work/text/${{ steps.req.outputs.short_id }}.ass" \
+            --transcript "work/qa/${{ steps.req.outputs.short_id }}-transcript.txt" \
+            --model base.en
+          test -s "work/text/${{ steps.req.outputs.short_id }}.ass"
+
+      - name: Assemble captioned narration-led Short
         run: |
           set -euo pipefail
           python3 scripts/assemble.py \
             --manifest '${{ steps.req.outputs.manifest }}' \
             --assets work/assets \
             --out work/output \
-            --qa work/qa
+            --qa work/qa \
+            --text-track "work/text/${{ steps.req.outputs.short_id }}.ass"
 
       - name: Show QA result
         run: |
           set -euo pipefail
           cat "work/qa/${{ steps.req.outputs.short_id }}.txt"
 
-      - name: Publish pilot render and QA
+      - name: Publish captioned render and QA
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          FINAL_TAG='${{ steps.req.outputs.short_id }}-assembly-pilot'
+          FINAL_TAG='${{ steps.req.outputs.short_id }}-assembly-final'
           gh release delete "$FINAL_TAG" -y --cleanup-tag --repo '${{ github.repository }}' 2>/dev/null || true
-          gh release create "$FINAL_TAG" work/output/* work/qa/* \
+          gh release create "$FINAL_TAG" work/output/* work/qa/* work/text/* \
             --repo '${{ github.repository }}' \
-            --title "Assembly pilot ${{ steps.req.outputs.short_id }}" \
-            --notes "Narration-led FFmpeg assembly pilot with automated technical QA."
+            --title "Captioned assembly ${{ steps.req.outputs.short_id }}" \
+            --notes "Narration-led FFmpeg assembly with burned-in captions, mechanism overlays, and automated technical QA."
 
       - name: Record assembly success
         run: |
@@ -118,5 +133,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "assembly-status/${{ steps.req.outputs.short_id }}.txt"
-          git commit -m "Record assembly result for ${{ steps.req.outputs.short_id }}" || exit 0
+          git commit -m "Record captioned assembly result for ${{ steps.req.outputs.short_id }}" || exit 0
           git push
