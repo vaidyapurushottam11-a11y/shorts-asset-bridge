@@ -1,0 +1,12 @@
+short=wy-n01
+clips=10
+narration_duration=61.701
+output_duration=61.700
+resolution=1080x1920
+video_codec=h264
+audio_codec=aac
+stretch_factors=1.204,1.204,1.204,1.204,1.224,1.224,1.244,1.244,1.244,1.244
+captions_status=BURNED_IN
+overlay_count=4
+technical_status=PASS
+editorial_status=PENDING_HUMAN_REVIEW
