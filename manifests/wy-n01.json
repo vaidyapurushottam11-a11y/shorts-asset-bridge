@@ -1,0 +1,28 @@
+{
+  "short_id":"wy-n01",
+  "pilot":false,
+  "narration":"narration.mp3",
+  "output":"wy-n01_final_captioned.mp4",
+  "max_stretch":1.55,
+  "require_text_track":true,
+  "clips":[
+    {"file":"s01.mp4","target_seconds":6.0,"beat":"checked bag handoff"},
+    {"file":"s02.mp4","target_seconds":6.0,"beat":"ground handling cost"},
+    {"file":"s03.mp4","target_seconds":6.0,"beat":"bag fee payment"},
+    {"file":"s04.mp4","target_seconds":6.0,"beat":"ticket purchase contrast"},
+    {"file":"s05.mp4","target_seconds":6.1,"beat":"tagging and fee mechanism"},
+    {"file":"s06.mp4","target_seconds":6.1,"beat":"airport operating scale"},
+    {"file":"s07.mp4","target_seconds":6.2,"beat":"checked bag leaves passenger"},
+    {"file":"s08.mp4","target_seconds":6.2,"beat":"carry-on versus checked bag"},
+    {"file":"s09.mp4","target_seconds":6.2,"beat":"baggage system handling"},
+    {"file":"s10.mp4","target_seconds":6.2,"beat":"airline payoff"}
+  ],
+  "overlays":[
+    {"start":1.0,"end":5.0,"text":"A CHECKED BAG CREATES WORK"},
+    {"start":17.0,"end":22.0,"text":"BAG FEES PRICE THAT EXTRA HANDLING"},
+    {"start":34.0,"end":40.0,"text":"CARRY-ON AND CHECKED BAG COST DIFFERENTLY"},
+    {"start":50.0,"end":57.0,"text":"THE FEE CHANGES TRAVELER BEHAVIOR"}
+  ],
+  "transitions":"hard-cuts",
+  "notes":["Uses approved WY-N01 media only.","Uses approved safe-area caption treatment.","No unverified numeric overlays are introduced."]
+}
