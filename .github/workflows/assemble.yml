@@ -74,7 +74,6 @@ jobs:
           gh release download '${{ steps.req.outputs.release_tag }}' \
             --repo '${{ github.repository }}' \
             --dir work/assets
-          echo "Downloaded source assets:"
           find work/assets -maxdepth 1 -type f -printf '%f\n' | sort
 
       - name: Verify every source asset with ffprobe
@@ -95,6 +94,18 @@ jobs:
             --transcript "work/qa/${{ steps.req.outputs.short_id }}-transcript.txt" \
             --model base.en
           test -s "work/text/${{ steps.req.outputs.short_id }}.ass"
+
+      - name: Record caption-track checkpoint
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          mkdir -p assembly-status
+          printf 'captions_generated=yes\noverlays=%s\n' "$(jq '.overlays | length' '${{ steps.req.outputs.manifest }}')" > "assembly-status/${{ steps.req.outputs.short_id }}-text.txt"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "assembly-status/${{ steps.req.outputs.short_id }}-text.txt"
+          git commit -m "Record text-track generation for ${{ steps.req.outputs.short_id }}" || true
+          git push || true
 
       - name: Assemble captioned narration-led Short
         run: |
