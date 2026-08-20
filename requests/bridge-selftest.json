@@ -1,0 +1,6 @@
+{
+  "tag": "bridge-selftest",
+  "manifest": {
+    "probe.txt": "https://raw.githubusercontent.com/vaidyapurushottam11-a11y/temp_repo/main/write_test.txt"
+  }
+}
