@@ -43,18 +43,13 @@ jobs:
               echo "No added/modified assembly request found" >&2
               exit 1
             fi
-            python3 - "$REQUEST_FILE" <<'PY' > resolved.env
-          import json, shlex, sys
-          r = json.load(open(sys.argv[1]))
-          for k in ('short_id','release_tag','manifest'):
-              if not isinstance(r.get(k), str) or not r[k]:
-                  raise SystemExit(f'Missing/invalid {k}')
-          print('SHORT_ID=' + shlex.quote(r['short_id']))
-          print('RELEASE_TAG=' + shlex.quote(r['release_tag']))
-          print('MANIFEST_PATH=' + shlex.quote(r['manifest']))
-          PY
-            source resolved.env
+            SHORT_ID=$(jq -r '.short_id // empty' "$REQUEST_FILE")
+            RELEASE_TAG=$(jq -r '.release_tag // empty' "$REQUEST_FILE")
+            MANIFEST_PATH=$(jq -r '.manifest // empty' "$REQUEST_FILE")
           fi
+          test -n "$SHORT_ID"
+          test -n "$RELEASE_TAG"
+          test -n "$MANIFEST_PATH"
           test -f "$MANIFEST_PATH"
           echo "short_id=$SHORT_ID" >> "$GITHUB_OUTPUT"
           echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
