@@ -1,5 +1,7 @@
 {
   "short_id":"he-n01",
   "release_tag":"he-n01",
-  "manifest":"manifests/he-n01.json"
+  "manifest":"manifests/he-n01.json",
+  "format":"approved-he-n03",
+  "run":2
 }
