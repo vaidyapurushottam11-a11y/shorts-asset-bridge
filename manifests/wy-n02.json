@@ -1,0 +1,27 @@
+{
+  "short_id":"wy-n02",
+  "pilot":false,
+  "narration":"narration.mp3",
+  "output":"wy-n02_final_captioned.mp4",
+  "max_stretch":1.55,
+  "require_text_track":true,
+  "clips":[
+    {"file":"s01.mp4","target_seconds":5.8,"beat":"outlet familiarity"},
+    {"file":"s02.mp4","target_seconds":5.8,"beat":"regular-store comparison"},
+    {"file":"s03.mp4","target_seconds":6.0,"beat":"outlet stockroom"},
+    {"file":"s04.mp4","target_seconds":6.2,"beat":"new outlet-specific stock"},
+    {"file":"s05.mp4","target_seconds":6.4,"beat":"manufacturing mechanism"},
+    {"file":"s06.mp4","target_seconds":6.2,"beat":"construction comparison"},
+    {"file":"s07.mp4","target_seconds":6.2,"beat":"new stock reaches rack"},
+    {"file":"s08.mp4","target_seconds":6.2,"beat":"side-by-side reveal"},
+    {"file":"s09.mp4","target_seconds":6.2,"beat":"shopper payoff"}
+  ],
+  "overlays":[
+    {"start":1.0,"end":5.0,"text":"OUTLET DOESN'T ALWAYS MEAN LEFTOVERS"},
+    {"start":18.0,"end":23.0,"text":"MADE FOR THE OUTLET"},
+    {"start":32.0,"end":38.0,"text":"DIFFERENT CONSTRUCTION"},
+    {"start":45.0,"end":51.0,"text":"COMPARE THE PRODUCT, NOT THE TAG"}
+  ],
+  "transitions":"hard-cuts",
+  "notes":["Uses approved WY-N02 media only.","Uses the approved HE-N03 caption safe-area treatment.","No unverified numeric overlays are introduced."]
+}
