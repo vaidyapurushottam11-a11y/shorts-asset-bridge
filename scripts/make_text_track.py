@@ -38,14 +38,19 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
 Style: Caption,DejaVu Sans,60,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,3,10,0,2,95,95,650,1
-Style: Overlay,DejaVu Sans,70,&H00000000,&H000000FF,&H00000000,&H0000FFFF,-1,0,0,0,100,100,0,0,3,14,2,8,105,105,215,1
+Style: Overlay,DejaVu Sans,70,&H00000000,&H000000FF,&H00000000,&H0000FFFF,-1,0,0,0,100,100,0,0,4,14,0,8,105,105,215,1
 
 [Events]
 Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
 """
     ev=[]
-    for s,e,x in caps: ev.append(f"Dialogue: 0,{t(s)},{t(max(e,s+0.35))},Caption,,0,0,0,,{esc(x.upper())}")
-    for o in manifest.get("overlays",[]): ev.append(f"Dialogue: 1,{t(o['start'])},{t(o['end'])},Overlay,,0,0,0,,{esc(o['text'].upper())}")
+    for s,e,x in caps:
+        ev.append(f"Dialogue: 0,{t(s)},{t(max(e,s+0.35))},Caption,,0,0,0,,{esc(x.upper())}")
+    for o in manifest.get("overlays",[]):
+        # Explicit per-event colors avoid libass BorderStyle=3 color ambiguity.
+        # ASS colors are BBGGRR: yellow background = &H0000FFFF&, black text = &H00000000&.
+        text="{\\1c&H00000000&\\3c&H0000FFFF&\\4c&H0000FFFF&\\bord14\\shad0}" + esc(o['text'].upper())
+        ev.append(f"Dialogue: 1,{t(o['start'])},{t(o['end'])},Overlay,,0,0,0,,{text}")
     pathlib.Path(a.out).write_text(header+"\n".join(ev)+"\n",encoding="utf-8")
-    print(json.dumps({"caption_chunks":len(caps),"overlays":len(manifest.get("overlays",[])),"reference_style":"HE-01"}))
+    print(json.dumps({"caption_chunks":len(caps),"overlays":len(manifest.get("overlays",[])),"reference_style":"HE-01","overlay_fix":"explicit-black-text-yellow-box"}))
 if __name__=="__main__": main()
