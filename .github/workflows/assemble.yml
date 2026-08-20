@@ -1,0 +1,127 @@
+name: assemble-short
+
+on:
+  workflow_dispatch:
+    inputs:
+      short_id:
+        description: "Short id (e.g. he-n03)"
+        required: true
+      release_tag:
+        description: "Source asset release tag"
+        required: true
+      manifest:
+        description: "Manifest path in repo"
+        required: true
+  push:
+    paths:
+      - 'assembly-requests/*.json'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Resolve assembly request
+        id: req
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            SHORT_ID='${{ inputs.short_id }}'
+            RELEASE_TAG='${{ inputs.release_tag }}'
+            MANIFEST_PATH='${{ inputs.manifest }}'
+          else
+            REQUEST_FILE=$(git diff-tree --no-commit-id --name-only --diff-filter=AM -r "${{ github.sha }}" -- 'assembly-requests/*.json' | tail -n 1)
+            if [ -z "$REQUEST_FILE" ]; then
+              echo "No added/modified assembly request found" >&2
+              exit 1
+            fi
+            python3 - "$REQUEST_FILE" <<'PY' > resolved.env
+          import json, shlex, sys
+          r = json.load(open(sys.argv[1]))
+          for k in ('short_id','release_tag','manifest'):
+              if not isinstance(r.get(k), str) or not r[k]:
+                  raise SystemExit(f'Missing/invalid {k}')
+          print('SHORT_ID=' + shlex.quote(r['short_id']))
+          print('RELEASE_TAG=' + shlex.quote(r['release_tag']))
+          print('MANIFEST_PATH=' + shlex.quote(r['manifest']))
+          PY
+            source resolved.env
+          fi
+          test -f "$MANIFEST_PATH"
+          echo "short_id=$SHORT_ID" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "manifest=$MANIFEST_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+
+      - name: Download transferred assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p work/assets work/output work/qa
+          gh release download '${{ steps.req.outputs.release_tag }}' \
+            --repo '${{ github.repository }}' \
+            --dir work/assets
+          echo "Downloaded source assets:"
+          find work/assets -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Verify every source asset with ffprobe
+        run: |
+          set -euo pipefail
+          for f in work/assets/*; do
+            ffprobe -v error -show_entries format=duration \
+              -of default=noprint_wrappers=1:nokey=1 "$f" >/dev/null
+          done
+
+      - name: Assemble narration-led pilot
+        run: |
+          set -euo pipefail
+          python3 scripts/assemble.py \
+            --manifest '${{ steps.req.outputs.manifest }}' \
+            --assets work/assets \
+            --out work/output \
+            --qa work/qa
+
+      - name: Show QA result
+        run: |
+          set -euo pipefail
+          cat "work/qa/${{ steps.req.outputs.short_id }}.txt"
+
+      - name: Publish pilot render and QA
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          FINAL_TAG='${{ steps.req.outputs.short_id }}-assembly-pilot'
+          gh release delete "$FINAL_TAG" -y --cleanup-tag --repo '${{ github.repository }}' 2>/dev/null || true
+          gh release create "$FINAL_TAG" work/output/* work/qa/* \
+            --repo '${{ github.repository }}' \
+            --title "Assembly pilot ${{ steps.req.outputs.short_id }}" \
+            --notes "Narration-led FFmpeg assembly pilot with automated technical QA."
+
+      - name: Record assembly success
+        run: |
+          set -euo pipefail
+          git pull --rebase
+          mkdir -p assembly-status
+          cp "work/qa/${{ steps.req.outputs.short_id }}.txt" \
+             "assembly-status/${{ steps.req.outputs.short_id }}.txt"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "assembly-status/${{ steps.req.outputs.short_id }}.txt"
+          git commit -m "Record assembly result for ${{ steps.req.outputs.short_id }}" || exit 0
+          git push
