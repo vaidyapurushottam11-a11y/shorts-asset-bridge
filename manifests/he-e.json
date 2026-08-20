@@ -1,0 +1,94 @@
+{
+  "short_id": "he-e",
+  "pilot": false,
+  "narration": "narration.mp3",
+  "output": "he-e_final_captioned.mp4",
+  "max_stretch": 1.55,
+  "require_text_track": true,
+  "clips": [
+    {
+      "file": "s01.mp4",
+      "target_seconds": 5.5,
+      "beat": "cash back feels free (hook)"
+    },
+    {
+      "file": "s02.mp4",
+      "target_seconds": 5.0,
+      "beat": "every swipe: a cut to the bank"
+    },
+    {
+      "file": "s03.mp4",
+      "target_seconds": 5.0,
+      "beat": "premium cards cost the most"
+    },
+    {
+      "file": "s04.mp4",
+      "target_seconds": 5.0,
+      "beat": "stores can't surcharge cardholders"
+    },
+    {
+      "file": "s05.mp4",
+      "target_seconds": 5.0,
+      "beat": "one sticker for everyone"
+    },
+    {
+      "file": "s06.mp4",
+      "target_seconds": 5.0,
+      "beat": "cash quietly covers rewards"
+    },
+    {
+      "file": "s07.mp4",
+      "target_seconds": 5.0,
+      "beat": "rewards skew to higher earners"
+    },
+    {
+      "file": "s08.mp4",
+      "target_seconds": 5.0,
+      "beat": "cash skews to people with less"
+    },
+    {
+      "file": "s09.mp4",
+      "target_seconds": 5.0,
+      "beat": "the subsidy (part 1)"
+    },
+    {
+      "file": "s10.mp4",
+      "target_seconds": 5.0,
+      "beat": "the subsidy (part 2)"
+    },
+    {
+      "file": "s11.mp4",
+      "target_seconds": 5.5,
+      "beat": "payoff: the Fed's plain name \u2014 a transfer"
+    }
+  ],
+  "overlays": [
+    {
+      "start": 2.0,
+      "end": 7.0,
+      "text": "REWARDS AREN\u2019T FREE"
+    },
+    {
+      "start": 9.0,
+      "end": 15.0,
+      "text": "SWIPE FEE  \u2192  THE BANK"
+    },
+    {
+      "start": 26.0,
+      "end": 32.0,
+      "text": "ONE PRICE FOR EVERYONE"
+    },
+    {
+      "start": 47.0,
+      "end": 52.0,
+      "text": "ECONOMISTS CALL IT A TRANSFER"
+    }
+  ],
+  "transitions": "hard-cuts",
+  "notes": [
+    "Burned-in captions generated from approved narration audio (Whisper base.en), 2-4 word chunks.",
+    "Overlays are approved mechanism facts only; no invented statistics.",
+    "No clip duplication, no freezes; narration speed unchanged; narration is the master timeline.",
+    "Credit Card Rewards \u2014 11 approved Kling clips."
+  ]
+}
