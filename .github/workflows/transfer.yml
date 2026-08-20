@@ -27,6 +27,8 @@ jobs:
       - name: Check out request file
         if: github.event_name == 'push'
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Record push trigger diagnostic
         if: github.event_name == 'push'
@@ -39,25 +41,6 @@ jobs:
           git commit -m "Record bridge trigger diagnostic" || true
           git push
 
-      - name: Record event path diagnostic
-        if: github.event_name == 'push'
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json, os
-          event = json.load(open(os.environ['GITHUB_EVENT_PATH']))
-          head = event.get('head_commit') or {}
-          safe = {
-              'added': head.get('added') or [],
-              'modified': head.get('modified') or [],
-              'removed': head.get('removed') or [],
-          }
-          json.dump(safe, open('bridge-event-paths.json', 'w'), indent=2)
-          PY
-          git add bridge-event-paths.json
-          git commit -m "Record bridge event path diagnostic" || true
-          git push
-
       - name: Resolve transfer request
         id: request
         shell: bash
@@ -67,19 +50,11 @@ jobs:
             printf '%s' '${{ inputs.tag }}' > tag.txt
             printf '%s' '${{ inputs.manifest }}' > manifest.json
           else
-            REQUEST_FILE=$(python3 - <<'PY'
-          import json, os
-          event = json.load(open(os.environ['GITHUB_EVENT_PATH']))
-          head = event.get('head_commit') or {}
-          paths = []
-          for key in ('added', 'modified'):
-              paths.extend(head.get(key) or [])
-          paths = [p for p in paths if p.startswith('requests/') and p.endswith('.json')]
-          if not paths:
-              raise SystemExit('No request JSON found in push event')
-          print(paths[-1])
-          PY
-          )
+            REQUEST_FILE=$(git diff-tree --no-commit-id --name-only -r "${{ github.sha }}" -- 'requests/*.json' | tail -n 1)
+            if [ -z "$REQUEST_FILE" ]; then
+              echo "No request JSON found in triggering commit" >&2
+              exit 1
+            fi
             python3 - "$REQUEST_FILE" <<'PY'
           import json, sys
           request = json.load(open(sys.argv[1]))
