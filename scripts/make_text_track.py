@@ -15,15 +15,14 @@ def ass_time(seconds):
 
 
 def clean_text(text):
-    text = re.sub(r"\s+", " ", text or "").strip()
-    return text
+    return re.sub(r"\s+", " ", text or "").strip()
 
 
 def ass_escape(text):
     return clean_text(text).replace("\\", r"\\").replace("{", r"\{").replace("}", r"\}")
 
 
-def chunk_words(words, max_words=4):
+def chunk_words(words, max_words=3, max_chars=22):
     chunks = []
     buf = []
     start = None
@@ -32,12 +31,16 @@ def chunk_words(words, max_words=4):
         token = clean_text(w.get("word", ""))
         if not token:
             continue
+        proposed = " ".join(buf + [token])
+        if buf and (len(buf) >= max_words or len(proposed) > max_chars):
+            chunks.append((start, end, " ".join(buf)))
+            buf, start, end = [], None, None
         if start is None:
             start = float(w.get("start", 0.0))
         end = float(w.get("end", start + 0.5))
         buf.append(token)
         terminal = token.endswith((".", "?", "!", ",", ";", ":"))
-        if len(buf) >= max_words or (terminal and len(buf) >= 2):
+        if terminal and len(buf) >= 2:
             chunks.append((start, end, " ".join(buf)))
             buf, start, end = [], None, None
     if buf:
@@ -64,7 +67,7 @@ def main():
             all_words.extend(seg["words"])
 
     if all_words:
-        captions = chunk_words(all_words, max_words=4)
+        captions = chunk_words(all_words, max_words=3, max_chars=22)
     else:
         captions = []
         for seg in result.get("segments", []):
@@ -73,10 +76,10 @@ def main():
             if not parts:
                 continue
             start, end = float(seg["start"]), float(seg["end"])
-            n = max(1, (len(parts) + 3) // 4)
+            n = max(1, (len(parts) + 2) // 3)
             span = (end - start) / n
             for i in range(n):
-                chunk = parts[i*4:(i+1)*4]
+                chunk = parts[i*3:(i+1)*3]
                 if chunk:
                     captions.append((start + i*span, min(end, start + (i+1)*span), " ".join(chunk)))
 
@@ -86,13 +89,13 @@ def main():
 ScriptType: v4.00+
 PlayResX: 1080
 PlayResY: 1920
-WrapStyle: 2
+WrapStyle: 0
 ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
-Style: Caption,Arial,66,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,5,1,2,90,90,250,1
-Style: Overlay,Arial,72,&H00FFFFFF,&H000000FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,3,3,0,8,110,110,180,1
+Style: Caption,DejaVu Sans,52,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,1,2,150,150,260,1
+Style: Overlay,DejaVu Sans,54,&H00FFFFFF,&H000000FF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,3,3,0,8,150,150,190,1
 
 [Events]
 Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
@@ -117,6 +120,10 @@ Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
         "overlays": len(manifest.get("overlays", [])),
         "transcript_chars": len(clean_text(result.get("text", ""))),
         "model": args.model,
+        "safe_margin_px": 150,
+        "caption_font_px": 52,
+        "max_words_per_caption": 3,
+        "max_chars_per_caption": 22
     }
     print(json.dumps(meta))
 
