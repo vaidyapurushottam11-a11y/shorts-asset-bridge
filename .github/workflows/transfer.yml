@@ -30,17 +30,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Record push trigger diagnostic
-        if: github.event_name == 'push'
-        run: |
-          set -euo pipefail
-          echo "push trigger reached" > bridge-triggered.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add bridge-triggered.txt
-          git commit -m "Record bridge trigger diagnostic" || true
-          git push
-
       - name: Resolve transfer request
         id: request
         shell: bash
@@ -50,9 +39,9 @@ jobs:
             printf '%s' '${{ inputs.tag }}' > tag.txt
             printf '%s' '${{ inputs.manifest }}' > manifest.json
           else
-            REQUEST_FILE=$(git diff-tree --no-commit-id --name-only -r "${{ github.sha }}" -- 'requests/*.json' | tail -n 1)
+            REQUEST_FILE=$(git diff-tree --no-commit-id --name-only --diff-filter=AM -r "${{ github.sha }}" -- 'requests/*.json' | tail -n 1)
             if [ -z "$REQUEST_FILE" ]; then
-              echo "No request JSON found in triggering commit" >&2
+              echo "No added/modified request JSON found in triggering commit" >&2
               exit 1
             fi
             python3 - "$REQUEST_FILE" <<'PY'
@@ -65,15 +54,6 @@ jobs:
           PY
           fi
           echo "tag=$(cat tag.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Record request resolved diagnostic
-        if: github.event_name == 'push'
-        run: |
-          set -euo pipefail
-          echo "request resolved" > bridge-resolved.txt
-          git add bridge-resolved.txt
-          git commit -m "Record bridge request resolution" || true
-          git push
 
       - name: Download assets from Pikaso
         run: |
@@ -90,15 +70,6 @@ jobs:
           bash dl.sh
           echo "Downloaded:"; ls -la assets
 
-      - name: Record download diagnostic
-        if: github.event_name == 'push'
-        run: |
-          set -euo pipefail
-          echo "download completed" > bridge-downloaded.txt
-          git add bridge-downloaded.txt
-          git commit -m "Record bridge download completion" || true
-          git push
-
       - name: Publish as a public Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -111,12 +82,3 @@ jobs:
             --title "Assets $TAG" \
             --notes "Automated Pikaso transfer (deterministic bridge)."
           echo "Release $TAG published with assets:"; ls assets
-
-      - name: Record bridge self-test success
-        if: github.event_name == 'push' && steps.request.outputs.tag == 'bridge-selftest'
-        run: |
-          set -euo pipefail
-          echo "bridge self-test passed" > bridge-selftest-success.txt
-          git add bridge-selftest-success.txt
-          git commit -m "Record bridge self-test success"
-          git push
