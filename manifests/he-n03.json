@@ -1,0 +1,27 @@
+{
+  "short_id": "he-n03",
+  "pilot": true,
+  "narration": "narration.mp3",
+  "output": "he-n03_final_pilot.mp4",
+  "max_stretch": 1.55,
+  "clips": [
+    {"file": "s01.mp4", "target_seconds": 6.2, "beat": "familiar subscription-use setup"},
+    {"file": "s02.mp4", "target_seconds": 6.3, "beat": "renewal/payment friction appears"},
+    {"file": "s03.mp4", "target_seconds": 6.6, "beat": "customer chooses not to continue"},
+    {"file": "s04.mp4", "target_seconds": 6.2, "beat": "normal automatic subscription month"},
+    {"file": "s05.mp4", "target_seconds": 6.8, "beat": "inertia keeps an unused subscription alive"},
+    {"file": "s06.mp4", "target_seconds": 6.6, "beat": "expired/replacement card creates a decision point"},
+    {"file": "s07.mp4", "target_seconds": 7.0, "beat": "failed renewal forces payment update"},
+    {"file": "s08.mp4", "target_seconds": 7.0, "beat": "forced choice causes cancellation/non-renewal"},
+    {"file": "s09.mp4", "target_seconds": 7.3, "beat": "payoff: friction breaks passive subscription inertia"}
+  ],
+  "captions": [],
+  "overlays": [],
+  "transitions": "hard-cuts",
+  "notes": [
+    "Pilot validates timing and motion before caption burn-in.",
+    "No clip duplication, no freezes, and narration speed remains unchanged.",
+    "Unequal beat durations are intentional; final values are proportionally aligned to ffprobe narration duration.",
+    "Editorial QA must explicitly judge whether the required slow-motion factors remain natural."
+  ]
+}
