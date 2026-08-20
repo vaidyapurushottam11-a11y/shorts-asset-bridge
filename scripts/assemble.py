@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import math
-import os
 import pathlib
 import subprocess
-import sys
 
 
 def run(cmd, capture=False):
@@ -47,6 +44,7 @@ def main():
     ap.add_argument("--assets", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--qa", required=True)
+    ap.add_argument("--text-track")
     args = ap.parse_args()
 
     manifest = json.load(open(args.manifest, encoding="utf-8"))
@@ -63,22 +61,23 @@ def main():
     if missing:
         raise SystemExit("Missing assets: " + ", ".join(missing))
 
+    text_track = pathlib.Path(args.text_track) if args.text_track else None
+    if text_track and not text_track.exists():
+        raise SystemExit(f"Missing text track: {text_track}")
+
     narration_info = probe(narration)
     narration_duration = duration_seconds(narration_info)
     if not audio_stream(narration_info):
         raise SystemExit("Narration file has no audio stream")
 
-    clip_infos = []
     source_durations = []
     for clip in clips:
         info = probe(clip)
-        vs = video_stream(info)
-        if not vs:
+        if not video_stream(info):
             raise SystemExit(f"No video stream: {clip}")
         d = duration_seconds(info)
         if d <= 0:
             raise SystemExit(f"Invalid duration: {clip}")
-        clip_infos.append(info)
         source_durations.append(d)
 
     requested = [float(c["target_seconds"]) for c in manifest["clips"]]
@@ -86,12 +85,8 @@ def main():
     if requested_total <= 0:
         raise SystemExit("Manifest target duration total must be positive")
 
-    # Narration is authoritative. Keep semantic relative durations from manifest,
-    # then scale them slightly so the video ends exactly with the real narration.
     factor = narration_duration / requested_total
     targets = [x * factor for x in requested]
-
-    # Guardrail: no clip duplication/freeze. Report slowdowns explicitly.
     stretch = [t / s for t, s in zip(targets, source_durations)]
     max_stretch = float(manifest.get("max_stretch", 1.6))
     if any(x > max_stretch for x in stretch):
@@ -113,7 +108,12 @@ def main():
             f"scale=1080:1920:force_original_aspect_ratio=increase,"
             f"crop=1080:1920,fps=30,setpts={ratio:.9f}*PTS[{label}]"
         )
-    filters.append("".join(labels) + f"concat=n={len(clips)}:v=1:a=0[vout]")
+
+    base_label = "vbase" if text_track else "vout"
+    filters.append("".join(labels) + f"concat=n={len(clips)}:v=1:a=0[{base_label}]")
+    if text_track:
+        escaped = str(text_track).replace("\\", "/").replace(":", "\\:").replace("'", "\\'")
+        filters.append(f"[vbase]subtitles='{escaped}'[vout]")
     filter_complex = ";".join(filters)
 
     output = out_dir / manifest["output"]
@@ -143,6 +143,7 @@ def main():
         "resolution_1080x1920": bool(final_v and final_v.get("width") == 1080 and final_v.get("height") == 1920),
         "duration_matches_narration": abs(final_duration - narration_duration) <= 0.20,
         "all_source_assets_valid": True,
+        "text_track_present": bool(text_track and text_track.exists()) if manifest.get("require_text_track", False) else True,
     }
     technical_pass = all(checks.values())
 
@@ -158,7 +159,8 @@ def main():
         "checks": checks,
         "technical_status": "PASS" if technical_pass else "FAIL",
         "editorial_status": "PENDING_HUMAN_REVIEW",
-        "captions_status": "PENDING_AFTER_TIMING_PILOT" if manifest.get("pilot") else "MANIFEST_CONTROLLED",
+        "captions_status": "BURNED_IN" if text_track else "NONE",
+        "overlay_count": len(manifest.get("overlays", [])),
         "notes": manifest.get("notes", []),
     }
     json.dump(qa, open(qa_dir / f"{manifest['short_id']}.json", "w", encoding="utf-8"), indent=2)
@@ -171,6 +173,8 @@ def main():
         f.write(f"video_codec={final_v.get('codec_name')}\n")
         f.write(f"audio_codec={final_a.get('codec_name')}\n")
         f.write("stretch_factors=" + ",".join(f"{x:.3f}" for x in stretch) + "\n")
+        f.write(f"captions_status={'BURNED_IN' if text_track else 'NONE'}\n")
+        f.write(f"overlay_count={len(manifest.get('overlays', []))}\n")
         f.write(f"technical_status={'PASS' if technical_pass else 'FAIL'}\n")
         f.write("editorial_status=PENDING_HUMAN_REVIEW\n")
 
