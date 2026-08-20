@@ -18,7 +18,7 @@ on:
       - 'requests/*.json'
 
 permissions:
-  contents: write          # only the run's built-in token; lets it create a Release
+  contents: write
 
 jobs:
   transfer:
@@ -57,7 +57,6 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p assets
-          # Mask every URL in the logs, then fetch each to its target filename.
           python3 - <<'PY'
           import json
           m = json.load(open('manifest.json'))
@@ -75,10 +74,20 @@ jobs:
         run: |
           set -euo pipefail
           TAG='${{ steps.request.outputs.tag }}'
-          # Replace any prior release with the same tag so re-runs are clean.
           gh release delete "$TAG" -y --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
           gh release create "$TAG" assets/* \
             --repo "${{ github.repository }}" \
             --title "Assets $TAG" \
             --notes "Automated Pikaso transfer (deterministic bridge)."
           echo "Release $TAG published with assets:"; ls assets
+
+      - name: Record bridge self-test success
+        if: github.event_name == 'push' && steps.request.outputs.tag == 'bridge-selftest'
+        run: |
+          set -euo pipefail
+          echo "bridge self-test passed" > bridge-selftest-success.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bridge-selftest-success.txt
+          git commit -m "Record bridge self-test success"
+          git push
